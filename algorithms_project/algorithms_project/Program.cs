@@ -9,67 +9,21 @@
 
     static void Main(string[] args)
     {
-        // create a dictionary for the synsets where the key is the id (int) and the value is a list of strings
+        // calling function to read synsets_file and return a dictionary 
 
-        Dictionary<int, List<string>> wordNetDic = new Dictionary<int, List<string>>();
+        var wordnet_dic = read_synsets(synsets_file);
 
+        // calling function to read hypernyms and return a dictionary with the child as key and a list of parents
 
-        // read data from the synsets file and put it into the dictionary
-
-        var reader = new StreamReader(synsets_file);
-        while (!reader.EndOfStream)
-        {
-            var line = reader.ReadLine();
-            var values = line.Split(',');
-            int id = int.Parse(values[0]);
-            var synset = values[1].Split(' '); //[a A]
-            var synsets = new List<string>(synset);
-            wordNetDic.Add(id, synsets);
-        }
-        reader.Close();
-
-        /*
-                foreach (KeyValuePair<int, List<string>> keyValuePair in wordNetDic)
-                {
-                    Console.WriteLine("key:" + keyValuePair.Key + " values: " + String.Join(",", keyValuePair.Value));
-                }*/
-
-
-        //create an adjacency list
-
-        var hypernyms = new Dictionary<int, List<int>>();
-
-        // reading hypernyms file
-
-        var reader2 = new StreamReader(hypernyms_file);
-        while (!reader2.EndOfStream)
-        {
-            var line = reader2.ReadLine();
-            var values = line.Split(',');
-            int id = int.Parse(values[0]);
-            var ancestors = new List<int>();
-
-            // loop through parents in the array
-            for (int i = 1; i < values.Length; i++)
-            {
-                ancestors.Add(int.Parse(values[i]));
-            }
-
-            hypernyms.Add(id, ancestors);
-        }
-        reader.Close();
-
-        /*        foreach (KeyValuePair<int, List<int>> keyValuePair in hypernyms)
-                {
-                    Console.WriteLine("key:" + keyValuePair.Key + " values: " + String.Join(",", keyValuePair.Value));
-                }*/
-
+        var hypernyms = read_hypernyms(hypernyms_file);
 
         // reading the queries
 
-
         var reader3 = new StreamReader(RelationsQueries);
         string n_of_queries = reader3.ReadLine();
+
+        // wordset contains all the founded ids of all synsets that the given word belongs to
+        
         var wordset1 = new List<int>();
         var wordset2 = new List<int>();
         while (!reader3.EndOfStream)
@@ -81,60 +35,111 @@
             string word2 = values[1];
 
             // call function find_ids to find all ids for the 2 queries words and return a list that contains the set of synsets 
-            var founded_queries = find_ids(word1, word2, wordNetDic);
+
+            var founded_queries = find_ids(word1, word2, wordnet_dic);
             wordset1 = founded_queries[0];
             wordset2 = founded_queries[1];
 
-            Console.WriteLine("founded " + word1 + " with ids: {" + String.Join(",", wordset1) + "}\n");
-            Console.WriteLine("founded " + word2 + " with ids: {" + String.Join(",", wordset2) + "}\n");
+            Console.WriteLine("\nfounded word1--> " +"\""+ word1 +"\" " + "with ids: {" + String.Join(",", wordset1) + "}\n");
+            Console.WriteLine("\nfounded word2--> " + "\"" + word1 + "\" " + "with ids: {" + String.Join(",", wordset2) + "}\n");
 
 
             // loop through all ids in a wordset
             foreach (int id in wordset1)
             {
-                Console.WriteLine("looping through id: " + id);
+                Console.WriteLine("\nlooping through id: " + id);
 
                 // calling the dfs function to return a list of ancestors for a node
 
                 var root_path = new List<int>();
-                var ancestors=new List<List<int>>();
-                var word1_ancestors = dfs(id, hypernyms, root_path,ancestors);
-                foreach(var l in word1_ancestors)
-                {
-                    
-                Console.WriteLine("ancestors of word 1: (" + string.Join(',', l) + ")\n");
-                }
-
-                /*                var root_path = new List<int>();
-                                 List<List<int>> ancestors = new List<List<int>>();
-                                Dictionary<int,bool>visited=new Dictionary<int,bool>();
-                                var word1_ancestors = dfs(id, hypernyms, root_path,ancestors);
-                                foreach(var ls in word1_ancestors)
-                                {
-                                    Console.WriteLine("ancestors: "+ String.Join(',',ls));
-                                }*/
+                var ancestors = new List<List<int>>();
+                var word1_ancestors = dfs(id, hypernyms, root_path);
+                Console.WriteLine("\nancestors of word 1: (" + string.Join(',', word1_ancestors) + ")\n");
+                
 
             }
-/*            foreach (int id in wordset2)
-            {
-                *//*Console.WriteLine("looping through id: "+ id);*//*
-
-                // calling the dfs function to return a list of ancestors for a node
-
-                var root_path = new List<int>();
-                var word2_ancestors = dfs(id, hypernyms, root_path);
-
-
-                Console.WriteLine("ancestors of word 2: (" + string.Join(',', word2_ancestors) + ")\n");
-            }*/
 
 
 
         }
-        reader.Close();
+
+        // function read_synsets implementation
+
+        static Dictionary<int, List<string>> read_synsets(string text_file)
+        {
+            // create a dictionary for the synsets where the key is the id (int) and the value is a list of strings
+
+            var wordNetDic = new Dictionary<int, List<string>>();
+
+
+            // read data from the synsets file and put it into the dictionary
+
+            var reader = new StreamReader(text_file);
+            while (!reader.EndOfStream)
+            {
+                var line = reader.ReadLine();
+                var values = line.Split(',');
+                int id = int.Parse(values[0]);
+                var array = values[1].Split(' ');
+                var synsets = new List<string>(array);
+                wordNetDic.Add(id, synsets);
+            }
+            reader.Close();
+
+            // printing every key value pair in the dictionary
+
+/*
+            foreach (KeyValuePair<int, List<string>> keyValuePair in wordNetDic)
+            {
+                Console.WriteLine("id:" + keyValuePair.Key + " word: " + String.Join(",", keyValuePair.Value));
+            }
+*/
+            return wordNetDic;
+
+        }
+
+        // function read_hypernyms implementation
+
+        static Dictionary<int, List<int>> read_hypernyms(string text_file)
+        {
+            //create an adjacency list
+
+            var hypernyms = new Dictionary<int, List<int>>();
+
+            // reading hypernyms file
+
+            var reader = new StreamReader(text_file);
+            while (!reader.EndOfStream)
+            {
+                var line = reader.ReadLine();
+                var values = line.Split(',');
+                int id = int.Parse(values[0]);
+                var ancestors = new List<int>();
+
+                // loop through parents in the array
+                for (int i = 1; i < values.Length; i++)
+                {
+                    ancestors.Add(int.Parse(values[i]));
+                }
+
+                hypernyms.Add(id, ancestors);
+            }
+            reader.Close();
+
+            // printing every key value pair in hypernyms dictionary
+
+            foreach (KeyValuePair<int, List<int>> keyValuePair in hypernyms)
+            {
+                Console.WriteLine("id: " + keyValuePair.Key + " parents ids: " + String.Join(",", keyValuePair.Value));
+            }
+
+
+            return hypernyms;
+        }
     }
 
     // function to traverse the dictionary to find the id of the 2 queries words
+
     public static List<List<int>> find_ids(string word1, string word2, Dictionary<int, List<string>> wordNetDic)
     {
         var founded_synsets = new List<List<int>>();
@@ -159,80 +164,20 @@
     // creating a dfs function that takes a node id and the adjacency list (hypernyms dictionary)
     // and returns a list of ids of ancestors till the root ancestor
 
-    public static List<List<int>> dfs(int node, Dictionary<int, List<int>> hypernyms, List<int> path_to_root,List<List<int>>ancestors)
+    public static List<int> dfs(int node, Dictionary<int, List<int>> hypernyms, List<int> path_to_root)
     {
 
-            if(hypernyms[node].Count > 0)
-            {
-
-                ancestors.Add(path_to_root.GetRange(0, 8));
-
-
-            }
         foreach (var adjacent in hypernyms[node])
         {
             path_to_root.Add(adjacent);
-            dfs(adjacent, hypernyms, path_to_root,ancestors);
+            dfs(adjacent, hypernyms, path_to_root);
         }
-        return ancestors;
+        
+        return path_to_root;
 
 
     }
 
-
-    /*    public static List<List<int>> dfs(int node, Dictionary<int, List<int>> hypernyms, List<int> path_to_root,List<List<int>>ancestors)
-        {
-
-            // if we reached the root and still other adjacencies wasn't visited we should separate the 
-
-                Stack<int> stk = new Stack<int>(); 
-                stk.Push(node);
-
-            while(stk.Count > 0)
-            {
-                node = stk.Peek();
-                path_to_root.Add(node);
-                stk.Pop();
-                if (hypernyms[node].Count == 0)
-                {
-                    ancestors.Add(path_to_root);
-                    stk.Clear();
-
-
-                }
-                foreach(var adjacents in hypernyms[node])
-                {
-                    stk.Push(adjacents);
-                }
-            }
-
-            return ancestors;
-
-
-
-
-        }*/
-    /*    public static List<List<int>> ancestors;
-    */
-    /*    public static List<List<int>> dfs(int node, List<list<int>> hypernyms , List<int> root_path,)
-        {
-            if (hypernyms[node].Count() == 0)
-            {
-                // add the list to ancestors list
-
-                // clear the list
-            }
-            is_visited.Add(node, true);
-            foreach (int adjacents in hypernyms[node])
-            {
-                if (!is_visited[adjacents])
-                {
-                    root_path.Add(adjacents);
-                    dfs(adjacents, is_visited, root_path, hypernyms);
-                }
-                root_path.Remove(adjacents);
-            }
-        }*/
 
 }
 
