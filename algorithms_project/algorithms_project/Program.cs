@@ -26,6 +26,7 @@
         
         var wordset1 = new List<int>();
         var wordset2 = new List<int>();
+
         while (!reader3.EndOfStream)
         {
             var line = reader3.ReadLine();
@@ -41,9 +42,10 @@
             wordset2 = founded_queries[1];
 
             Console.WriteLine("\nfounded word1--> " +"\""+ word1 +"\" " + "with ids: {" + String.Join(",", wordset1) + "}\n");
-            Console.WriteLine("\nfounded word2--> " + "\"" + word1 + "\" " + "with ids: {" + String.Join(",", wordset2) + "}\n");
+            Console.WriteLine("\nfounded word2--> " + "\"" + word2 + "\" " + "with ids: {" + String.Join(",", wordset2) + "}\n");
 
-
+            var word1_ancestors = new Dictionary<int, List<int>>();
+            var word2_ancestors = new Dictionary<int, List<int>>();
             // loop through all ids in a wordset
             foreach (int id in wordset1)
             {
@@ -56,13 +58,15 @@
                 
                 // calling the dfs function to return a list of ancestors for a node1
                 
-                var word1_ancestors = dfs(id, hypernyms,word1_path_to_root);
+                 word1_ancestors = dfs(id, hypernyms,word1_path_to_root);
                 
                 foreach(KeyValuePair<int,List<int>> kv in word1_ancestors)
                 {
                     Console.WriteLine("\npossible pathes from node1 to root: " + string.Join(" -> ", kv.Value) + "\n");
 
                 }
+
+                // create the output reading file
 
 
 
@@ -81,7 +85,8 @@
 
                 // calling the dfs function to return a list of ancestors for a node1
 
-                var word2_ancestors = dfs(id, hypernyms, word2_path_to_root);
+                 word2_ancestors = dfs(id, hypernyms, word2_path_to_root);
+                
 
                 foreach (KeyValuePair<int, List<int>> kv in word2_ancestors)
                 {
@@ -93,7 +98,42 @@
 
             // by finding all pathes from node 1 and node 2 till the root we need to implement finding the lca function
 
+            // initialize a list to hold the indexes of lowest common ancestors for 2 node
+            /* var depth_dic=new Dictionary<int, int>();*/
+            var depth = new List<int>();
+            var lcas_indexes=new Dictionary<int,List< int >>();
 
+            // loop through all keys in the 2 dictionaries
+            
+            foreach(KeyValuePair<int,List<int>> kv1 in word1_ancestors)
+            {
+                var word1_list=kv1.Value;
+                foreach(KeyValuePair<int, List<int>> kv2 in word2_ancestors)
+                {
+                    var word2_list=kv2.Value;
+                    var ls=new List<int>();
+
+                    ls = lca(word1_list, word2_list);
+                    int index = ls[0];
+                    depth.Add(ls[1]);
+                    if (!lcas_indexes.ContainsKey(index))
+                    {
+                        lcas_indexes.Add(index,word1_list);
+                        
+
+                    }
+                }
+            }
+            int finalDepth;
+            finalDepth=depth.Min(); 
+
+            var lca_index=lcas_indexes.Keys.Min();
+            var lca_id = lcas_indexes[lca_index][lca_index];
+            Console.WriteLine("lowest common ancestor: " + lca_id);
+
+            Console.WriteLine( wordnet_dic[lca_id][0]);
+            Console.WriteLine("depth: "+ finalDepth);
+            Console.WriteLine("==================================================================================================");
 
 
         }
@@ -200,30 +240,69 @@
      and returns a dictionary of all pathes from the node to the root */
 
     public static List<int> list=new List<int>();
-    public static Dictionary<int,List<int>> dfs(int node, Dictionary<int, List<int>> hypernyms, Dictionary<int, List<int>> ancestors)
+    public static Dictionary<int, List<int>> dfs(int node, Dictionary<int, List<int>> hypernyms, Dictionary<int, List<int>> ancestors)
     {
-
-        foreach (var adjacent in hypernyms[node])
+        if (hypernyms[node].Count == 0)
         {
-            if (hypernyms[adjacent].Count == 0)
-            {
-                list.Add(adjacent);
-                var ls=new List<int>(list);
-                ancestors.Add(ancestors.Count,ls);
-                
-                list.Clear();
-            }
-            else
-            {
-                list.Add(adjacent);
-                dfs(adjacent, hypernyms, ancestors);
+            list.Add(node);
+            var ls = new List<int>(list);
+            ancestors.Add(ancestors.Count, ls);
 
-            }
+            list.Clear();
         }
+        else
+        {
+           
+            foreach (var adjacent in hypernyms[node])
+            {
+                list.Add(node);
+                dfs(adjacent, hypernyms, ancestors);
+                
+            }
+
+        }
+
 
         return ancestors;
 
 
+    }
+
+    // creating the lca function
+    public static List<int> lca(List<int> word1_list, List<int> word2_list)
+    {
+        int word1_depth = word1_list.Count-1;
+        int word2_depth = word2_list.Count-1;
+        int word1_current_index = 0;
+        int word2_current_index = 0;
+        int depth=0;
+
+        while(word1_depth != word2_depth)
+        {
+            if (word1_depth > word2_depth)
+            {
+                word1_current_index++;
+                word1_depth--;
+                depth++;
+            }
+            else
+            {
+                word2_current_index++;
+                word2_depth--;
+                depth++;
+            }
+        }
+
+        while (word1_list[word1_current_index] != word2_list[word2_current_index])
+        {
+            word1_current_index++;
+            word2_current_index++;
+            depth = depth + 2;
+        }
+        var ls=new List<int>();
+        ls.Add(word1_current_index);
+        ls.Add(depth);
+        return ls;
     }
 
 
