@@ -49,15 +49,50 @@
             {
                 Console.WriteLine("\nlooping through id: " + id);
 
-                // calling the dfs function to return a list of ancestors for a node
 
-                var root_path = new List<int>();
-                var ancestors = new List<List<int>>();
-                var word1_ancestors = dfs(id, hypernyms, root_path);
-                Console.WriteLine("\nancestors of word 1: (" + string.Join(',', word1_ancestors) + ")\n");
+                // create a dictionary to store all possible pathes from a node to root
+
+                var word1_path_to_root = new Dictionary<int,List<int>>();
                 
+                // calling the dfs function to return a list of ancestors for a node1
+                
+                var word1_ancestors = dfs(id, hypernyms,word1_path_to_root);
+                
+                foreach(KeyValuePair<int,List<int>> kv in word1_ancestors)
+                {
+                    Console.WriteLine("\npossible pathes from node1 to root: " + string.Join(" -> ", kv.Value) + "\n");
+
+                }
+
+
 
             }
+
+            // loop through all ids in a wordset2
+
+            foreach (int id in wordset2)
+            {
+                Console.WriteLine("\nlooping through id: " + id);
+
+
+                // create a dictionary to store all possible pathes from a node to root
+
+                var word2_path_to_root = new Dictionary<int, List<int>>();
+
+                // calling the dfs function to return a list of ancestors for a node1
+
+                var word2_ancestors = dfs(id, hypernyms, word2_path_to_root);
+
+                foreach (KeyValuePair<int, List<int>> kv in word2_ancestors)
+                {
+                    Console.WriteLine("\npossible pathes from node2 to root: " + string.Join(" -> ", kv.Value) + "\n");
+
+                }
+
+            }
+
+            // by finding all pathes from node 1 and node 2 till the root we need to implement finding the lca function
+
 
 
 
@@ -161,19 +196,32 @@
         return founded_synsets;
     }
 
-    // creating a dfs function that takes a node id and the adjacency list (hypernyms dictionary)
-    // and returns a list of ids of ancestors till the root ancestor
+/*     creating a dfs function that takes a node id and the adjacency list (hypernyms dictionary)
+     and returns a dictionary of all pathes from the node to the root */
 
-    public static List<int> dfs(int node, Dictionary<int, List<int>> hypernyms, List<int> path_to_root)
+    public static List<int> list=new List<int>();
+    public static Dictionary<int,List<int>> dfs(int node, Dictionary<int, List<int>> hypernyms, Dictionary<int, List<int>> ancestors)
     {
 
         foreach (var adjacent in hypernyms[node])
         {
-            path_to_root.Add(adjacent);
-            dfs(adjacent, hypernyms, path_to_root);
+            if (hypernyms[adjacent].Count == 0)
+            {
+                list.Add(adjacent);
+                var ls=new List<int>(list);
+                ancestors.Add(ancestors.Count,ls);
+                
+                list.Clear();
+            }
+            else
+            {
+                list.Add(adjacent);
+                dfs(adjacent, hypernyms, ancestors);
+
+            }
         }
-        
-        return path_to_root;
+
+        return ancestors;
 
 
     }
