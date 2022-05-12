@@ -1,10 +1,10 @@
 ﻿class Program
 {
-    static string synsets_file = dir.s_c1 + dir.synsets;
-    static string hypernyms_file = dir.s_c1+dir.hypernyms;
-    static string RelationsQueries = dir.s_c1 + dir.Rq;
-    /*static string OutcastQueries = dir.s_c1 + dir.Rq_out;*/
-    static string output = dir.s_c1 + dir.Rq_out;
+    static string synsets_file = dir.c_l3 + dir.synsets;
+    static string hypernyms_file = dir.c_l3+dir.hypernyms;
+    static string RelationsQueries = dir.c_l3 + dir.Rq;
+    /*static string OutcastQueries = dir.s_c2 + dir.Rq_out;*/
+    static string output = dir.c_l3 + dir.Rq_out;
 
 
     static void Main(string[] args)
@@ -105,6 +105,7 @@
                 if (lowest_depth != actual_depth)
                 {
                     Console.WriteLine("xxxxxxxxxxxxxxxx      depth is wrong      xxxxxxxxxxxxxxxxxxxxx");
+                    throw new Exception("the depth is wrong");
                 }
 
                 Console.WriteLine("depth: " + lowest_depth + "\t\t expected depth is: " + actual_depth);
