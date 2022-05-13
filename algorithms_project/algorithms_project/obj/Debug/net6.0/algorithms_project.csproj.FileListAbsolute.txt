@@ -34,7 +34,6 @@ D:\youss\Desktop\wordnet_project\algorithms_project\algorithms_project\bin\Debug
 D:\youss\Desktop\wordnet_project\algorithms_project\algorithms_project\bin\Debug\net6.0\algorithms_project.dll
 D:\youss\Desktop\wordnet_project\algorithms_project\algorithms_project\bin\Debug\net6.0\ref\algorithms_project.dll
 D:\youss\Desktop\wordnet_project\algorithms_project\algorithms_project\bin\Debug\net6.0\algorithms_project.pdb
-D:\youss\Desktop\wordnet_project\algorithms_project\algorithms_project\obj\Debug\net6.0\algorithms_project.csproj.AssemblyReference.cache
 D:\youss\Desktop\wordnet_project\algorithms_project\algorithms_project\obj\Debug\net6.0\algorithms_project.GeneratedMSBuildEditorConfig.editorconfig
 D:\youss\Desktop\wordnet_project\algorithms_project\algorithms_project\obj\Debug\net6.0\algorithms_project.AssemblyInfoInputs.cache
 D:\youss\Desktop\wordnet_project\algorithms_project\algorithms_project\obj\Debug\net6.0\algorithms_project.AssemblyInfo.cs

@@ -1,34 +1,84 @@
-﻿class Program
+﻿using System.Diagnostics;
+
+
+
+class Program
 {
-    static string synsets_file = dir.c_l2 + dir.synsets;
-    static string hypernyms_file = dir.c_l2+dir.hypernyms;
-    static string RelationsQueries = dir.c_l2 + dir.Rq;
-    static string output = dir.c_l2 + dir.Rq_out;
-    static string OutcastQueries = dir.c_l2 + dir.oq;
-    static string OutcastQueries_output = dir.c_l2 + dir.oq_out;
+
+    static string tc;
 
     static void Main(string[] args)
     {
+        // creating a menu of test cases
+
+        Console.WriteLine("enter a testcase number:\n " +
+            "1-Small\\Case1_100_100 \n" +
+            "2-Small\\Case2_1000_500 \n"+
+            "3-Medium\\Case1_10000_5000 \n"+
+            "4-Medium\\Case2_10000_50000 \n" +
+            "5-Large\\Case1_82K_100K_5000RQ \n"+
+            "6-Large\\Case2_82K_300K_1500RQ\n"+
+            "7-Large\\Case3_82K_300K_5000RQ\n");
+
+        char choice=(char)Console.ReadLine()[0];
+        switch (choice)
+        {
+            case '1': tc= dir.c_s1; break;
+            case '2': tc= dir.c_s2; break;
+            case '3': tc = dir.c_m1;break;
+            case '4': tc=dir.c_m2;break;
+            case '5': tc = dir.c_l1; break;
+            case '6': tc = dir.c_l2; break;
+            case '7': tc = dir.c_l3; break;
+
+
+        }
+
+        string synsets_file = tc + dir.synsets;
+        string hypernyms_file = tc + dir.hypernyms;
+        string RelationsQueries = tc + dir.Rq;
+        string output = tc + dir.Rq_out;
+        string OutcastQueries = tc + dir.oq;
+        string OutcastQueries_output = tc + dir.oq_out;
+
+
+
+
+
 
         // calling function to read synsets_file and return a dictionary 
 
         Dictionary<int, List<string>> wordnet_dic = Synsets.read_synsets(synsets_file);
 
         // calling function to read hypernyms and return a dictionary with the child as key and a list of parents
-
+        Stopwatch graph_sw=  new Stopwatch();
+        graph_sw.Start();
         Dictionary<int, List<int>> hypernyms = Hypernyms.read_hypernyms(hypernyms_file);
+        graph_sw.Stop();
+        TimeSpan ts1 = graph_sw.Elapsed;
 
+        // Format and display the TimeSpan value.
+        string elapsedTime1 = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
+            ts1.Hours, ts1.Minutes, ts1.Seconds,
+            ts1.Milliseconds / 10);
+        Console.WriteLine("\n creating the graph time:" +elapsedTime1 );
 
 
         // reading the queries
 
+
         var reader3 = new StreamReader(RelationsQueries);
+
         // initialize the number of queries
         int n_of_queries = int.Parse(reader3.ReadLine());
         int counter = 0;
 
+
+        Stopwatch rq_sw = new Stopwatch();
+        rq_sw.Start();
+        
         while (!reader3.EndOfStream)
-        {
+        {   
             var line = reader3.ReadLine();
 
             var values = line.Split(',');
@@ -118,28 +168,39 @@
             counter++;
             lcas.Clear();
         }
+        rq_sw.Stop();
+        TimeSpan ts2 = rq_sw.Elapsed;
+
+        // Format and display the TimeSpan value.
+        string elapsedTime2 = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
+            ts2.Hours, ts2.Minutes, ts2.Seconds,
+            ts2.Milliseconds / 10);
+        Console.WriteLine("\n relational queries time:" + elapsedTime2);
+        Console.WriteLine("\n");
         // outcast queries
 
-        var queries=OutcastQuery.read_outcast_queries(OutcastQueries);
-        foreach(var query in queries)
+        Stopwatch outcast_q_sw=new Stopwatch();
+        outcast_q_sw.Start();
+        var queries = OutcastQuery.read_outcast_queries(OutcastQueries);
+        foreach (var query in queries)
         {
-           
-            var outcastQueryDic=OutcastQuery.find_ids(wordnet_dic, query);
-            var outcast_dic=new Dictionary<string,int>();
+
+            var outcastQueryDic = OutcastQuery.find_ids(wordnet_dic, query);
+            var outcast_dic = new Dictionary<string, int>();
 
             // call the lca
-            for(int i=0;i<outcastQueryDic.Count;i++)
+            for (int i = 0; i < outcastQueryDic.Count; i++)
             {
-                var wordList=new List<int>();
-                for(int j = 1; j < outcastQueryDic.Count; j++)
+                var wordList = new List<int>();
+                for (int j = 1; j < outcastQueryDic.Count; j++)
                 {
                     var word1_ids = outcastQueryDic.ElementAt(i).Value;
-                    var word2_ids= outcastQueryDic.ElementAt(j).Value;
+                    var word2_ids = outcastQueryDic.ElementAt(j).Value;
                     var word1_pathes2root = pathes2root(word1_ids, hypernyms);
-                    var word2_pathes2root=pathes2root(word2_ids, hypernyms);
-                   
+                    var word2_pathes2root = pathes2root(word2_ids, hypernyms);
+
                     //
-                    
+
                     Dictionary<int, int> lcas = new Dictionary<int, int>();
 
                     // loop through all possible pathes for node 1 and 2
@@ -154,10 +215,10 @@
 
                     // get the lowest depth
 
-                    int lowest_depth =lcas.Keys.Min();
+                    int lowest_depth = lcas.Keys.Min();
                     wordList.Add(lowest_depth);
-                    
-                    
+
+
 
 
 
@@ -166,22 +227,32 @@
 
             }
             var maximum_depth = outcast_dic.Values.Max();
-            foreach(KeyValuePair<string, int> kvp in outcast_dic)
+            foreach (KeyValuePair<string, int> kvp in outcast_dic)
             {
-                if (kvp.Value == maximum_depth) 
+                if (kvp.Value == maximum_depth)
                 {
-                    Console.WriteLine("odd word is : " + kvp.Key +" with total depth:  " + kvp.Value);
+                    Console.WriteLine("odd word is : " + kvp.Key + " with total depth:  " + kvp.Value);
                     break;
                 }
-                
+
             }
 
-            
+
             // sum distances 
 
             // save the total distance into an list
-            
+
         }
+        outcast_q_sw.Stop();
+        TimeSpan ts3 = outcast_q_sw.Elapsed;
+
+        // Format and display the TimeSpan value.
+        string elapsedTime3 = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
+            ts3.Hours, ts3.Minutes, ts3.Seconds,
+            ts3.Milliseconds / 10);
+        Console.WriteLine("\n  outcast query detection time:" + elapsedTime3);
+        Console.WriteLine("\n");
+
     }
 
     // functions 

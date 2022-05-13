@@ -1,14 +1,19 @@
 ﻿
     internal class dir
     {
+    //Many-Many(Noun in more than 1 synset)
+    // sample
+    // D:\youss\Desktop\wordnet_project\Testcases\Sample\Other special cases\Many-Many (Noun in more than 1 synset)
+    public static string s_s1 = "D:\\youss\\Desktop\\wordnet_project\\Testcases\\Sample\\Other special cases\\Many-Many (Noun in more than 1 synset)";
+
     // complete small 1
     public static string c_s1 = "D:\\youss\\Desktop\\wordnet_project\\Testcases\\Complete\\1-Small\\Case1_100_100";
 
     // complete small 2
     public static string c_s2 = "D:\\youss\\Desktop\\wordnet_project\\Testcases\\Complete\\1-Small\\Case2_1000_500";
-
+   
     // complete medium 1
-    public static string c_m1 = "D:\\youss\\Desktop\\wordnet_project\\Testcases\\Complete\\2-Medium\\Case2_10000_5000";
+    public static string c_m1 = "D:\\youss\\Desktop\\wordnet_project\\Testcases\\Complete\\2-Medium\\Case1_10000_5000";
 
     // complete medium 2
     public static string c_m2 = "D:\\youss\\Desktop\\wordnet_project\\Testcases\\Complete\\2-Medium\\Case2_10000_50000";
