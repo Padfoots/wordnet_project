@@ -31,7 +31,13 @@
 
     public static string Rq =  "\\Input\\3RelationsQueries.txt";
 
+    public static string oq = "\\Input\\4OutcastQueries.txt";
+
     public static string Rq_out ="\\Output\\Output1.txt";
+
+    public static string oq_out = "\\Output\\Output2.txt";
+
+
 }
 
 /*
