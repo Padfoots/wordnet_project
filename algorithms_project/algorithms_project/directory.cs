@@ -1,10 +1,20 @@
 ﻿
     internal class dir
     {
-    //Many-Many(Noun in more than 1 synset)
+
     // sample
-    // D:\youss\Desktop\wordnet_project\Testcases\Sample\Other special cases\Many-Many (Noun in more than 1 synset)
-    public static string s_s1 = "D:\\youss\\Desktop\\wordnet_project\\Testcases\\Sample\\Other special cases\\Many-Many (Noun in more than 1 synset)";
+
+    public static string s_1 = "D:\\youss\\Desktop\\wordnet_project\\Testcases\\Sample\\Case1";
+
+    public static string s_2 = "D:\\youss\\Desktop\\wordnet_project\\Testcases\\Sample\\Case2";
+
+    public static string s_3 = "D:\\youss\\Desktop\\wordnet_project\\Testcases\\Sample\\Case3";
+
+    public static string s_4 = "D:\\youss\\Desktop\\wordnet_project\\Testcases\\Sample\\Case4";
+
+    public static string s_5 = "D:\\youss\\Desktop\\wordnet_project\\Testcases\\Sample\\Other special cases\\2 commons case (Bidirectional)";
+
+    public static string s_6 = "D:\\youss\\Desktop\\wordnet_project\\Testcases\\Sample\\Other special cases\\Many-Many (Noun in more than 1 synset)";
 
     // complete small 1
     public static string c_s1 = "D:\\youss\\Desktop\\wordnet_project\\Testcases\\Complete\\1-Small\\Case1_100_100";
@@ -44,13 +54,3 @@
 
 
 }
-
-/*
-D:\youss\Desktop\wordnet_project\Testcases\Complete\3 - Large\Case1_82K_100K_5000RQ
-
-    D:\youss\Desktop\wordnet_project\Testcases\Complete\3 - Large\Case2_82K_300K_1500RQ
-
-
-    D:\youss\Desktop\wordnet_project\Testcases\Complete\3 - Large\Case3_82K_300K_5000RQ
-
-        D:\youss\Desktop\wordnet_project\Testcases\Complete\2 - Medium\Case2_10000_50000*/

@@ -42,3 +42,4 @@ D:\youss\Desktop\wordnet_project\algorithms_project\algorithms_project\obj\Debug
 D:\youss\Desktop\wordnet_project\algorithms_project\algorithms_project\obj\Debug\net6.0\ref\algorithms_project.dll
 D:\youss\Desktop\wordnet_project\algorithms_project\algorithms_project\obj\Debug\net6.0\algorithms_project.pdb
 D:\youss\Desktop\wordnet_project\algorithms_project\algorithms_project\obj\Debug\net6.0\algorithms_project.genruntimeconfig.cache
+D:\youss\Desktop\wordnet_project\algorithms_project\algorithms_project\obj\Debug\net6.0\algorithms_project.csproj.AssemblyReference.cache
