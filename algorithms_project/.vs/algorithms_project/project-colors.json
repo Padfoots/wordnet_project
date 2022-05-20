@@ -5,6 +5,11 @@
       "ProjectGuid": "6c04ed2e-83d1-493b-8dc2-ef46b5796744",
       "DisplayName": "algorithms_project",
       "ColorIndex": 0
+    },
+    "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3": {
+      "ProjectGuid": "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3",
+      "DisplayName": "Miscellaneous Files",
+      "ColorIndex": -1
     }
   },
   "NextColorIndex": 1
